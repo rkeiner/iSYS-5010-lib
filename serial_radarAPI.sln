@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2041
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "serial_radarAPI", "serial_radarAPI\serial_radarAPI.vcxproj", "{F1DF6A08-F616-4CFD-8F20-951D06501670}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F1DF6A08-F616-4CFD-8F20-951D06501670}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F1DF6A08-F616-4CFD-8F20-951D06501670}.Debug|Win32.Build.0 = Debug|Win32
+		{F1DF6A08-F616-4CFD-8F20-951D06501670}.Release|Win32.ActiveCfg = Debug|Win32
+		{F1DF6A08-F616-4CFD-8F20-951D06501670}.Release|Win32.Build.0 = Debug|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0B80FD0B-F25D-4C29-8552-F83BC7382677}
+	EndGlobalSection
+EndGlobal
