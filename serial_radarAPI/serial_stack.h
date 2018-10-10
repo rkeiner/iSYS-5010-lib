@@ -6,6 +6,37 @@
 #include "serial_radarAPI_if.h"
 #include "serial_radarAPI_basicTypes.h"
 
+/*
+ISYS_BAUDRATE_110 = 0,
+ISYS_BAUDRATE_300,
+ISYS_BAUDRATE_600,
+ISYS_BAUDRATE_1200,
+ISYS_BAUDRATE_2400,
+ISYS_BAUDRATE_4800,
+ISYS_BAUDRATE_9600,
+ISYS_BAUDRATE_19200,
+ISYS_BAUDRATE_38400,
+ISYS_BAUDRATE_57600,
+ISYS_BAUDRATE_115200,
+ISYS_BAUDRATE_256000,
+ISYS_BAUDRATE_512000
+*/
+
+int baud_rates[] = {
+		110
+, 300
+, 600
+, 1200
+, 2400
+, 4800
+, 9600
+, 19200
+, 38400
+, 57600
+, 115200
+, 256000
+, 512000 };
+
 // transmit frames
 
 #define FRAME_START 0
@@ -41,13 +72,13 @@
 // commmands
 //
 typedef struct device_cmd {
-    uint8_t frametype;
-    uint8_t destination;
-    uint8_t source;
-    uint8_t function;
-    uint8_t pdu;
-    uint8_t fcs;
-    uint8_t end_delim;
+	uint8_t frametype;
+	uint8_t destination;
+	uint8_t source;
+	uint8_t function;
+	uint8_t pdu;
+	uint8_t fcs;
+	uint8_t end_delim;
 } device_cmd_t;
 
 //
@@ -88,38 +119,38 @@ typedef struct device_cmd {
 
 /*
 // application sub-funcs
-0x00 00 // Line filter 1 Line filter 1 setting 1. Uint16_t: Enable (0= off, 1 = on) 2. Uint16_t: frequency in Hz 3. Uint16_t: offset in tenth of dB 6 (3 x uint16_t) 
-0x00 01 // Line filter 2 Line filter 2 setting 1. Uint16_t: Enable (0= off, 1 = on) 2. Uint16_t: frequency in Hz 3. Uint16_t: offset in tenth of dB 6 (3 x uint16_t) 
-0x0X 00 // Enable Digital output enable  0 = off  1 = digital  2 = pwm 2 (uint16_t) 
-0x0X 01 // Rising delay Rising delay in multiples of cycle time 2 (uint16_t) 
-0x0X 02 // falling delay falling delay in multiples of cycle time 2 (uint16_t) 
-0x0X 04 // Setting1 Setting 1 for the digital outputs  0 = active low side  1 = active high side  2 = totem pole 2 (uint16_t) 
+0x00 00 // Line filter 1 Line filter 1 setting 1. Uint16_t: Enable (0= off, 1 = on) 2. Uint16_t: frequency in Hz 3. Uint16_t: offset in tenth of dB 6 (3 x uint16_t)
+0x00 01 // Line filter 2 Line filter 2 setting 1. Uint16_t: Enable (0= off, 1 = on) 2. Uint16_t: frequency in Hz 3. Uint16_t: offset in tenth of dB 6 (3 x uint16_t)
+0x0X 00 // Enable Digital output enable  0 = off  1 = digital  2 = pwm 2 (uint16_t)
+0x0X 01 // Rising delay Rising delay in multiples of cycle time 2 (uint16_t)
+0x0X 02 // falling delay falling delay in multiples of cycle time 2 (uint16_t)
+0x0X 04 // Setting1 Setting 1 for the digital outputs  0 = active low side  1 = active high side  2 = totem pole 2 (uint16_t)
 0x0X 05 // Setting2 Setting 2 for the digital outputs  0 = normally open 2 (uint16_t)
-0x0X 06 // Angle min Min possible angle (value in tenth of degree) 2 (sint16_t) 
-0x0X 07 // Angel max max possible angle (value in tenth of degree) 2 (sint16_t) 
-0x0X 08 // Range min Min possible range (value in tenth of m) 2 (sint16_t) 
-0x0X 09 // Range max Max possible range (value in tenth of m) 2 (sint16_t) 
-0x0X 0A // Signal min Min possible signal strength (value in tenth of dB) 2 (sint16_t) 
-0x0X 0B // Signal max Max possible signal strength (value in tenth of dB) 2 (sint16_t) 
-0x0X 0C // Velocity min Min possible velocity (value in tenth of 𝑚𝑠) 2 (sint16_t) 
-0x0X 0D // Velocity max Max possible velocity (value in tenth of 𝑚𝑠) 2 (sint16_t) 
-0x0X 0E // Direction Moving direction of detect  1=approaching  2=receding  3=both directions Note: only available for sensors with velocity measurement function 2 (sint16_t) 
-0x0X 15 // Output filter Type of single target filter  0=highest amplitude  1=mean  2=median  3=min  4=max 2 (uint16_t) 
-0x0X 16 // Output filter signal Signal for single target filter  0=off  1=velocity radial  2=range radial 2 (uint16_t) 
-0x0X 17 // Alpha filter velocity Alpha-filter parameter for velocity set between 0 and 100 in percent 2 (uint16_t) 
-0x0X 18 // Alpha filter range Alpha-filter parameter for range Set between 1 and 100 in percent 2 (uint16_t) 
-0x0X 19 // Range min extended Min possible range (value in centimeter (0.01m)) 2 (sint16_t) 
+0x0X 06 // Angle min Min possible angle (value in tenth of degree) 2 (sint16_t)
+0x0X 07 // Angel max max possible angle (value in tenth of degree) 2 (sint16_t)
+0x0X 08 // Range min Min possible range (value in tenth of m) 2 (sint16_t)
+0x0X 09 // Range max Max possible range (value in tenth of m) 2 (sint16_t)
+0x0X 0A // Signal min Min possible signal strength (value in tenth of dB) 2 (sint16_t)
+0x0X 0B // Signal max Max possible signal strength (value in tenth of dB) 2 (sint16_t)
+0x0X 0C // Velocity min Min possible velocity (value in tenth of 𝑚𝑠) 2 (sint16_t)
+0x0X 0D // Velocity max Max possible velocity (value in tenth of 𝑚𝑠) 2 (sint16_t)
+0x0X 0E // Direction Moving direction of detect  1=approaching  2=receding  3=both directions Note: only available for sensors with velocity measurement function 2 (sint16_t)
+0x0X 15 // Output filter Type of single target filter  0=highest amplitude  1=mean  2=median  3=min  4=max 2 (uint16_t)
+0x0X 16 // Output filter signal Signal for single target filter  0=off  1=velocity radial  2=range radial 2 (uint16_t)
+0x0X 17 // Alpha filter velocity Alpha-filter parameter for velocity set between 0 and 100 in percent 2 (uint16_t)
+0x0X 18 // Alpha filter range Alpha-filter parameter for range Set between 1 and 100 in percent 2 (uint16_t)
+0x0X 19 // Range min extended Min possible range (value in centimeter (0.01m)) 2 (sint16_t)
 0x0X 1A // Range max extended Max possible range (value in centimeter (0.01m)) 2 (sint16_t)
-0x05 06 // Mounting offset (iSYS-6203 only) Set an additional mounting offset in mm 4 (uint32_t) 
-0x06 80 // Potis Reads/Writes the amplification potentiometer values 2 (uint16_t) 
-0x07 07 // Temperature threshold (iSYS-6203 only) Sets the temperature threshold for the temperature warning/alarm outputs OUT1 and OUT2 7 (3 x uint16_t + 1) 
-0x07 09 // Range/ temperature warning switch (iSYS-6203 only) Switch output between temperature and range warning 3 (3 x uint8_t) 
-0x07 0A // Temperature threshold value iSYS-6203 only) Set/get temperature warning threshold 4 (2x uint8_t + sint16_t) 
-0x07 0B // range threshold value iSYS-6203 only) Set/get range warning threshold 6 (2x uint8_t + uint32_t) 
-0x08 28 // Threshold margin parameter for moving targets: near range Set/get the sensitivity margin for moving targets in near range (up to 2.7m) 3 (uint8_t + sint16_t) 
-0x08 29 // Threshold margin parameter for moving targets: main range Set/get the sensitivity margin for moving targets in the main range (2.7m to 40.7 m) 3 (uint8_t + sint16_t) 
-0x08 2A // Threshold margin parameter for moving targets: long range Set/get the sensitivity margin for moving targets in near range (above 40.7m) 3 (uint8_t + sint16_t) 
-0x08 53 // Detection clustering Enables / disables the detection clustering 2 (2 x uint8_t) 
+0x05 06 // Mounting offset (iSYS-6203 only) Set an additional mounting offset in mm 4 (uint32_t)
+0x06 80 // Potis Reads/Writes the amplification potentiometer values 2 (uint16_t)
+0x07 07 // Temperature threshold (iSYS-6203 only) Sets the temperature threshold for the temperature warning/alarm outputs OUT1 and OUT2 7 (3 x uint16_t + 1)
+0x07 09 // Range/ temperature warning switch (iSYS-6203 only) Switch output between temperature and range warning 3 (3 x uint8_t)
+0x07 0A // Temperature threshold value iSYS-6203 only) Set/get temperature warning threshold 4 (2x uint8_t + sint16_t)
+0x07 0B // range threshold value iSYS-6203 only) Set/get range warning threshold 6 (2x uint8_t + uint32_t)
+0x08 28 // Threshold margin parameter for moving targets: near range Set/get the sensitivity margin for moving targets in near range (up to 2.7m) 3 (uint8_t + sint16_t)
+0x08 29 // Threshold margin parameter for moving targets: main range Set/get the sensitivity margin for moving targets in the main range (2.7m to 40.7 m) 3 (uint8_t + sint16_t)
+0x08 2A // Threshold margin parameter for moving targets: long range Set/get the sensitivity margin for moving targets in near range (above 40.7m) 3 (uint8_t + sint16_t)
+0x08 53 // Detection clustering Enables / disables the detection clustering 2 (2 x uint8_t)
 0x08 80 // Rcs output enable Enables / disables the rcs output 2 (2 x uint8_t)
 
 */
@@ -155,5 +186,6 @@ typedef struct device_cmd {
 #define CMD_READ_RAW 0xE0 // Read raw signal iSYS sends the sampled raw data of one measurement / modulation cycle 
 #define CMD_READ_RANGE_LIST 0xE1 // Read range list Reads range list consisting of different range values calculated by the modulation scheme and additional statistical values (only iSYS-600x, iSYS-6203) 
 #define CMD_FAILURE 0xFD // Failure Failure
+
 
 #endif // SERIAL_STACK_H
